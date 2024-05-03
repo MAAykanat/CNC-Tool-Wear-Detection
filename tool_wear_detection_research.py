@@ -40,9 +40,9 @@ for i in range(1,19):
 # 8. Missing Value Analysis
 # 9. Correlation Matrix
 
-#############
-# Train SET #
-#############
+#################
+# Train-set EDA #
+#################
 
 # 1. General Picture of the Dataset
 # 2. Missing Value Analysis - Handle
@@ -76,4 +76,18 @@ df_train["passed_visual_inspection"] = df_train["passed_visual_inspection"].fill
 
 print(df_train.isnull().sum())
 
+##############################
+# Combine all the dataframes #
+##############################
 
+print(df_train["tool_condition"])
+frames= []
+
+for i in range(1,19):
+    globals()['df_%s' % i]["target"]="worn" if df_train["tool_condition"][i-1] == "worn" else "unworn"
+    frames.append(globals()['df_%s' % i])
+
+df = pd.concat(frames, axis=0, ignore_index=True)
+
+print(df.head())
+print(df.shape)
