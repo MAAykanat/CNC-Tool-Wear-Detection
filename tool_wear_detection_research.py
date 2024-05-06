@@ -38,6 +38,8 @@ import matplotlib.pyplot as plt
 from shutil import get_terminal_size
 import warnings
 
+from sklearn.preprocessing import LabelEncoder, StandardScaler, MinMaxScaler
+
 warnings.filterwarnings('ignore')
 
 pd.set_option('display.max_columns', None) # Show all the columns
@@ -54,12 +56,12 @@ df.columns = df.columns.str.upper()
 
 # Notes Implementation
 
-df["TARGET"] = df["TARGET"].apply(lambda x: 1 if x == "worn" else 0)
+df["TARGET"] = df["TARGET"].apply(lambda x: 1 if x == "worn" else 0) # Convert to binary
 
 drop_list = ['MACHINING_PROCESS', 'Z1_CURRENTFEEDBACK', 'Z1_DCBUSVOLTAGE', 
              'Z1_OUTPUTCURRENT', 'Z1_OUTPUTVOLTAGE', 'S1_COMMANDACCELERATION', 
              'S1_SYSTEMINERTIA', 'M1_CURRENT_PROGRAM_NUMBER', 'M1_SEQUENCE_NUMBER', 
-             'M1_CURRENT_FEEDRATE', "EXP_NO"]
+             'M1_CURRENT_FEEDRATE', "EXP_NO", "Z1_COMMANDVELOCITY", "Z1_COMMANDACCELERATION"]
 
 df.drop(drop_list, axis=1, inplace=True)
 
@@ -475,5 +477,18 @@ print(df.shape) # (25286, 31)
 # It will be implemanted lately after research.
 
 # 4. Encoding
+# No need for encoding, there is only one categorical variable (TARGET)
+# It is already converted to binary at line 59
 
+# 5. Standardization
 
+cat_cols, num_cols, cat_but_car = grap_column_names(df)
+
+for col in cat_cols:
+    cat_cols = [col for col in cat_cols if col not in cat_to_numeric]
+
+for col in cat_to_numeric:
+    num_cols.append(col)
+
+scaler = MinMaxScaler()
+df[num_cols] = scaler.fit_transform(df[num_cols])
