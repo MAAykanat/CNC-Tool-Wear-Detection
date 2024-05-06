@@ -382,16 +382,73 @@ def replace_with_thresholds(dataframe, variable, q1=0.05, q3=0.95):
     None
     """
 
-    low_limit, up_limit = outlier_thresholds(dataframe, variable, q1=0.05, q3=0.95)
+    low_limit, up_limit = outlier_thresholds(dataframe, variable, q1, q3)
     dataframe.loc[(dataframe[variable] < low_limit), variable] = low_limit
     dataframe.loc[(dataframe[variable] > up_limit), variable] = up_limit
 
 for col in num_cols:
     print(f"{col}: {check_outlier(df, col)}")
 
+# Replace with thresholds
 for col in num_cols:
-    replace_with_thresholds(df, col)
+    if check_outlier(df, col):
+        replace_with_thresholds(df, col)
 
 # Handle the outliers
 for col in num_cols:
     print(f"{col}: {check_outlier(df, col)}")
+
+# 8. Missing Value Analysis
+# No missing values in the dataset
+print(df.isnull().sum())
+
+# 9. Correlation Matrix
+def high_correlated_cols(dataframe, plot=False, corr_th=0.90):
+    """
+    This function returns the columns that have a correlation higher than the threshold value.
+
+    Parameters
+    ----------
+    dataframe : pandas dataframe
+        The dataframe to be analyzed.
+    plot : bool, optional
+        The default is False.
+    corr_th : float, optional
+        The default is 0.90.
+    Returns
+    -------
+    drop_list : list
+        The list of columns that have a correlation higher than the threshold value.
+    """
+    corr = dataframe.corr()
+    cor_matrix = corr.abs()
+    upper_triangle_matrix = cor_matrix.where(np.triu(np.ones(cor_matrix.shape), k=1).astype(bool))
+    drop_list = [col for col in upper_triangle_matrix.columns if any(upper_triangle_matrix[col] > corr_th)]
+    if plot:
+        import seaborn as sns
+        import matplotlib.pyplot as plt
+        sns.set(rc={'figure.figsize': (15, 15)})
+        sns.heatmap(corr, cmap="RdBu")
+        plt.show()
+    return drop_list
+
+df_corr = df.corr()
+
+# f, ax = plt.subplots(figsize=(18, 18))
+# sns.heatmap(df_corr, annot=True, fmt=".2f", ax=ax, cmap="magma")
+# ax.set_title("Correlation Heatmap", color="black", fontsize=10)
+# plt.show()
+
+drop_corr_list=high_correlated_cols(df, plot=False, corr_th=0.95) # 0.95 selected since it is meaningful in statisticaly
+print(drop_corr_list)
+
+# Drop List
+"""
+['X1_COMMANDPOSITION', 'X1_COMMANDVELOCITY', 'Y1_COMMANDPOSITION', 
+'Y1_COMMANDVELOCITY', 'Z1_COMMANDPOSITION', 'S1_COMMANDPOSITION', 
+'S1_COMMANDVELOCITY', 'S1_DCBUSVOLTAGE', 'S1_OUTPUTVOLTAGE', 'S1_OUTPUTPOWER']
+"""
+
+print(df.shape) # (25286, 41)
+df.drop(drop_corr_list, axis=1, inplace=True)
+print(df.shape) # (25286, 31)
