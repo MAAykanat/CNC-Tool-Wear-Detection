@@ -492,3 +492,9 @@ for col in cat_to_numeric:
 
 scaler = MinMaxScaler()
 df[num_cols] = scaler.fit_transform(df[num_cols])
+
+print(df.head())
+print(df.shape)
+
+# 6. Save the Dataset
+df.to_csv('dataset/combined_cleaned.csv', index=False)
