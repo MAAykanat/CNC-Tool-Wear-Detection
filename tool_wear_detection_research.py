@@ -452,3 +452,28 @@ print(drop_corr_list)
 print(df.shape) # (25286, 41)
 df.drop(drop_corr_list, axis=1, inplace=True)
 print(df.shape) # (25286, 31)
+
+#######################################
+######### FEATURE ENGINEERING #########
+#######################################
+
+# There are 6 steps to be taken in the Feature Engineering process.
+# 1. Missing Values
+# 2. Outlier Values Analysis
+# 3. Feature Generation
+# 4. Encoding
+# 5. Standardization
+# 6. Save the Dataset
+
+# 1. Missing Values
+# No missing values in the dataset
+
+# 2. Outlier Values Analysis
+# Outliers are handled in the previous steps
+
+# 3. Feature Generation
+# It will be implemanted lately after research.
+
+# 4. Encoding
+
+
