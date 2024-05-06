@@ -38,6 +38,9 @@ print(df_train.isnull().sum()) # There are no missing values in the dataset
 
 frames= []
 for i in range(1,19):
+    globals()['df_%s' % i]["exp_no"]=i
+    globals()['df_%s' % i]["feedrate"] = df_train["feedrate"][i-1]
+    globals()['df_%s' % i]["clamp_pressure"] = df_train["clamp_pressure"][i-1]
     globals()['df_%s' % i]["target"]="worn" if df_train["tool_condition"][i-1] == "worn" else "unworn"
     frames.append(globals()['df_%s' % i])
 
