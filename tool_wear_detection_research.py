@@ -80,7 +80,6 @@ cat_to_numeric = ['FEEDRATE', 'CLAMP_PRESSURE'] # Convert to numeric
 # 9. Correlation Matrix
 
 # 1. General Picture of the Dataset
-
 def check_df(dataframe, head=5):
     print("##################### Shape #####################")
     print(dataframe.shape)
@@ -169,7 +168,6 @@ print("\n\nNumeric Columns: \n", num_cols)
 print("#"*50)
 
 # 3. Categorical Variables Analysis
-
 def cat_summary(dataframe, col_name, plot=False):
     """
     This function shows the frequency of categorical variables.
@@ -202,7 +200,6 @@ cat_cols = [col for col in cat_cols if col not in cat_to_numeric]
 print(cat_cols)
 
 # 4. Numeric Variables Analysis
-
 for col in cat_to_numeric:
     num_cols.append(col)
 
@@ -236,7 +233,6 @@ for col in num_cols:
 print("#"*50)
 
 # 5. Target Variable Analysis (Dependent Variable) - Categorical
-
 "Non-Sense to analyze the target variable, There is only 1 categorical variable"
 
 def target_summary_with_cat(dataframe, target, categorical_col):
@@ -266,7 +262,6 @@ for col in cat_cols:
 print("#"*50)
 
 # 6. Target Variable Analysis (Dependent Variable) - Numeric
-
 def target_summary_with_num(dataframe, target, numerical_col):
     """
     This function shows the average of numerical variables according to the target variable.
@@ -289,3 +284,114 @@ for col in num_cols:
     target_summary_with_num(df, "TARGET", col)
 print("#"*50)
 
+
+# 7. Outlier Detection
+# Outlier List below
+"""
+X1_ACTUALPOSITION: False, X1_ACTUALVELOCITY: True, X1_ACTUALACCELERATION: True
+X1_COMMANDPOSITION: False, X1_COMMANDVELOCITY: True, X1_COMMANDACCELERATION: True
+X1_CURRENTFEEDBACK: True, X1_DCBUSVOLTAGE: True, X1_OUTPUTCURRENT: False
+X1_OUTPUTVOLTAGE: True, X1_OUTPUTPOWER: True, Y1_ACTUALPOSITION: False
+Y1_ACTUALVELOCITY: True, Y1_ACTUALACCELERATION: True, Y1_COMMANDPOSITION: False
+Y1_COMMANDVELOCITY: True, Y1_COMMANDACCELERATION: True, Y1_CURRENTFEEDBACK: True
+Y1_DCBUSVOLTAGE: True, Y1_OUTPUTCURRENT: False, Y1_OUTPUTVOLTAGE: True
+Y1_OUTPUTPOWER: True, Z1_ACTUALPOSITION: False, Z1_ACTUALVELOCITY: True
+Z1_ACTUALACCELERATION: True, Z1_COMMANDPOSITION: False, Z1_COMMANDVELOCITY: True
+Z1_COMMANDACCELERATION: True, S1_ACTUALPOSITION: False, S1_ACTUALVELOCITY: False
+S1_ACTUALACCELERATION: False, S1_COMMANDPOSITION: False, S1_COMMANDVELOCITY: False
+S1_CURRENTFEEDBACK: True, S1_DCBUSVOLTAGE: True, S1_OUTPUTCURRENT: True
+S1_OUTPUTVOLTAGE: False, S1_OUTPUTPOWER: True, FEEDRATE: False
+CLAMP_PRESSURE: False
+"""
+
+def outlier_thresholds(dataframe, col_name, q1=0.05, q3=0.95):
+    """
+    This function calculates the lower and upper limits for the outliers.
+
+    Calculation:
+    Interquantile range = q3 - q1
+    Up limit = q3 + 1.5 * interquantile range
+    Low limit = q1 - 1.5 * interquantile range
+
+    Parameters
+    ----------
+    dataframe : pandas dataframe
+        The dataframe to be analyzed.
+    col_name : str
+        The name of the column to be analyzed.
+    q1 : float, optional
+        The default is 0.05.
+    q3 : float, optional
+        The default is 0.95.
+    Returns
+    -------
+    low_limit, up_limit : float
+        The lower and upper limits for the outliers.
+    """
+
+    quartile1 = dataframe[col_name].quantile(q1)
+    quartile3 = dataframe[col_name].quantile(q3)
+
+    interquantile_range = quartile3 - quartile1
+
+    up_limit = quartile3 + 1.5 * interquantile_range
+    low_limit = quartile1 - 1.5 * interquantile_range
+
+    return low_limit, up_limit
+
+def check_outlier(dataframe, col_name):
+    """
+        This function checks dataframe has outlier or not.
+
+    Parameters
+    ----------
+    dataframe : pandas dataframe
+        The dataframe to be analyzed.
+    col_name : str
+        The name of the column to be analyzed.
+    Returns
+    -------
+    bool
+        True if the dataframe has outlier, False otherwise.
+    """
+
+    lower_limit, upper_limit = outlier_thresholds(dataframe=dataframe, col_name=col_name)
+
+    if dataframe[(dataframe[col_name] > upper_limit) | (dataframe[col_name] < lower_limit)].any(axis=None):
+        # print(f'{col_name} have outlier')
+        return True
+    else:
+        return False
+    
+def replace_with_thresholds(dataframe, variable, q1=0.05, q3=0.95):
+    """
+    This function replaces the outliers with the lower and upper limits.
+
+    Parameters
+    ----------
+    dataframe : pandas dataframe
+        The dataframe to be analyzed.
+    variable : str
+        The name of the column to be analyzed.
+    q1 : float, optional
+        The default is 0.05.
+    q3 : float, optional
+        The default is 0.95.
+    Returns 
+    -------
+    None
+    """
+
+    low_limit, up_limit = outlier_thresholds(dataframe, variable, q1=0.05, q3=0.95)
+    dataframe.loc[(dataframe[variable] < low_limit), variable] = low_limit
+    dataframe.loc[(dataframe[variable] > up_limit), variable] = up_limit
+
+for col in num_cols:
+    print(f"{col}: {check_outlier(df, col)}")
+
+for col in num_cols:
+    replace_with_thresholds(df, col)
+
+# Handle the outliers
+for col in num_cols:
+    print(f"{col}: {check_outlier(df, col)}")
