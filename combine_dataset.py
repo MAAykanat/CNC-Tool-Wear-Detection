@@ -46,7 +46,10 @@ df = pd.concat(frames, axis=0, ignore_index=True)
 print(df.head())
 print(df.shape)
 
-
 # Save the dataset
 
-# df_train.to_csv('dataset/combined.csv', index=False)
+df.to_csv('dataset/combined.csv', index=False)
+
+############################
+####### END OF FILE ########
+############################
