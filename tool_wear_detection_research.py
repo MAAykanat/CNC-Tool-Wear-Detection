@@ -12,7 +12,8 @@
 #############
 
 ### 1. The dataset is combined.csv from train and experiment datasets
-### 2. Drop list: 
+### 2. Convert TARGET to binary (0,1) --> 0: Unworn, 1: Worn
+### 3. Drop list: 
 # 'MACHINING_PROCESS' -->  Not sure what it is and how it is related to the target
 # 'Z1_CURRENTFEEDBACK', --> All same - 0.0
 # 'Z1_DCBUSVOLTAGE', --> All same - 0.0
@@ -25,7 +26,7 @@
 # 'M1_CURRENT_FEEDRATE' --> There is miss leading information, correct one is 'FEEDRATE'
 # 'EXP_NO' --> Experiment number is not needed, it is cardinal variable
 
-### 3. List should convert to numeric:
+### 4. List should convert to numeric:
 # 'FEEDRATE'
 # 'CLAMP_PRESSURE'
 
@@ -52,6 +53,9 @@ df = pd.read_csv('dataset/combined.csv')
 df.columns = df.columns.str.upper()
 
 # Notes Implementation
+
+df["TARGET"] = df["TARGET"].apply(lambda x: 1 if x == "worn" else 0)
+
 drop_list = ['MACHINING_PROCESS', 'Z1_CURRENTFEEDBACK', 'Z1_DCBUSVOLTAGE', 
              'Z1_OUTPUTCURRENT', 'Z1_OUTPUTVOLTAGE', 'S1_COMMANDACCELERATION', 
              'S1_SYSTEMINERTIA', 'M1_CURRENT_PROGRAM_NUMBER', 'M1_SEQUENCE_NUMBER', 
@@ -228,5 +232,36 @@ def numerical_col_summary(dataframe, col_name, plot=False):
         plt.show()
 
 for col in num_cols:
-    numerical_col_summary(df,col, True)
+    numerical_col_summary(df,col)
 print("#"*50)
+
+# 5. Target Variable Analysis (Dependent Variable) - Categorical
+
+"Non-Sense to analyze the target variable, There is only 1 categorical variable"
+
+def target_summary_with_cat(dataframe, target, categorical_col):
+    """
+    This function shows the mean of the target variable according to the categorical variable.
+
+    Parameters
+    ----------
+    dataframe : pandas dataframe
+        The dataframe to be analyzed.
+    target : str
+        The name of the target variable.
+    categorical_col : str
+        The name of the categorical variable.
+    Returns
+    -------
+    None.
+    """
+    print(categorical_col)
+    print(pd.DataFrame({"TARGET_MEAN": dataframe.groupby(categorical_col)[target].mean(),
+                        "Count": dataframe[categorical_col].value_counts(),
+                        "Ratio": 100 * dataframe[categorical_col].value_counts() / len(dataframe)}), end="\n\n\n")
+
+for col in cat_cols:
+    target_summary_with_cat(df, "TARGET", col)
+
+print("#"*50)
+
