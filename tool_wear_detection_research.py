@@ -23,6 +23,7 @@
 # 'M1_CURRENT_PROGRAM_NUMBER' --> There is miss leading information all should be 1
 # 'M1_SEQUENCE_NUMBER' --> There is miss leading information all should be 1
 # 'M1_CURRENT_FEEDRATE' --> There is miss leading information, correct one is 'FEEDRATE'
+# 'EXP_NO' --> Experiment number is not needed, it is cardinal variable
 
 ### 3. List should convert to numeric:
 # 'FEEDRATE'
@@ -49,6 +50,16 @@ df = pd.read_csv('dataset/combined.csv')
 
 # Capitalize the column names
 df.columns = df.columns.str.upper()
+
+# Notes Implementation
+drop_list = ['MACHINING_PROCESS', 'Z1_CURRENTFEEDBACK', 'Z1_DCBUSVOLTAGE', 
+             'Z1_OUTPUTCURRENT', 'Z1_OUTPUTVOLTAGE', 'S1_COMMANDACCELERATION', 
+             'S1_SYSTEMINERTIA', 'M1_CURRENT_PROGRAM_NUMBER', 'M1_SEQUENCE_NUMBER', 
+             'M1_CURRENT_FEEDRATE', "EXP_NO"]
+
+df.drop(drop_list, axis=1, inplace=True)
+
+cat_to_numeric = ['FEEDRATE', 'CLAMP_PRESSURE'] # Convert to numeric
 
 #######################################
 ### EXPLORATORY DATA ANALYSIS - EDA ###
@@ -179,5 +190,43 @@ def cat_summary(dataframe, col_name, plot=False):
         plt.show()
 
 for col in cat_cols:
-    cat_summary(df,col, True)
+    cat_summary(df,col)
+print("#"*50)
+# Drop cols should be Numeric
+cat_cols = [col for col in cat_cols if col not in cat_to_numeric]
+
+print(cat_cols)
+
+# 4. Numeric Variables Analysis
+
+for col in cat_to_numeric:
+    num_cols.append(col)
+
+def numerical_col_summary(dataframe, col_name, plot=False):
+
+    """
+    This function shows the frequency of numerical variables.
+
+    Parameters
+    ----------
+    dataframe : pandas dataframe
+        The dataframe to be analyzed.
+    col_name : str
+        The name of the column to be analyzed.
+    plot : bool, optional
+        The default is False.
+    Returns
+    -------
+    None.
+    """
+    print(dataframe[col_name].describe([0.01, 0.05, 0.75, 0.90, 0.99]).T)
+    print("##########################################")
+    if plot:
+        sns.histplot(dataframe[col_name], kde=True)
+        plt.xlabel(col_name)
+        plt.title(f"{col_name} Distribution")
+        plt.show()
+
+for col in num_cols:
+    numerical_col_summary(df,col, True)
 print("#"*50)
