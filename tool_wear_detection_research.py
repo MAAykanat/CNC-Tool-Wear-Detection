@@ -7,11 +7,26 @@
 # Features: 52
 # Observations: 25286
 
-#######################################
-# Notes
-# 1. The dataset is combined.csv from train and experiment datasets
-# 2. MACHINING_PROCESS will be dropped
+#############
+### Notes ###
+#############
 
+### 1. The dataset is combined.csv from train and experiment datasets
+### 2. Drop list: 
+# 'MACHINING_PROCESS' -->  Not sure what it is and how it is related to the target
+# 'Z1_CURRENTFEEDBACK', --> All same - 0.0
+# 'Z1_DCBUSVOLTAGE', --> All same - 0.0
+# 'Z1_OUTPUTCURRENT', --> All same - 0.0
+# 'Z1_OUTPUTVOLTAGE', --> All same - 0.0
+# 'S1_COMMANDACCELERATION' --> Actual value is 'S1_ACTUALPOSITION' is there, no need to command
+# 'S1_SYSTEMINERTIA' --> All same - 12.0
+# 'M1_CURRENT_PROGRAM_NUMBER' --> There is miss leading information all should be 1
+# 'M1_SEQUENCE_NUMBER' --> There is miss leading information all should be 1
+# 'M1_CURRENT_FEEDRATE' --> There is miss leading information, correct one is 'FEEDRATE'
+
+### 3. List should convert to numeric:
+# 'FEEDRATE'
+# 'CLAMP_PRESSURE'
 
 import numpy as np
 import pandas as pd
