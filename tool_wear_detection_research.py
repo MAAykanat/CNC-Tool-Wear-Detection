@@ -1,3 +1,18 @@
+# Author: Muhammet Ali Aykanat - https://github.com/MAAykanat
+# Date: 06/05/2024
+# Version: 1.0
+# Description: Tool Wear Detection Research
+# Target: Tool Condition (Worn/Unworn)
+
+# Features: 52
+# Observations: 25286
+
+#######################################
+# Notes
+# 1. The dataset is combined.csv from train and experiment datasets
+# 2. MACHINING_PROCESS will be dropped
+
+
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -121,4 +136,33 @@ cat_cols, num_cols, cat_but_car = grap_column_names(df)
 print("\n\nCategorical Columns: \n", cat_cols)
 print("\n\nNumeric Columns: \n", num_cols)
 [print("\n\nCategorical but Cardinal EMPTY!!!\n") if cat_but_car == [] else print("Categorical but Cardinal: \n", cat_but_car)]
+print("#"*50)
+
+# 3. Categorical Variables Analysis
+
+def cat_summary(dataframe, col_name, plot=False):
+    """
+    This function shows the frequency of categorical variables.
+
+    Parameters
+    ----------
+    dataframe : pandas dataframe
+        The dataframe to be analyzed.
+    col_name : str
+        The name of the column to be analyzed.
+    plot : bool, optional
+        The default is False.
+    Returns
+    -------
+    None.
+    """
+    print(pd.DataFrame({col_name: dataframe[col_name].value_counts(),
+                        "Ratio": 100 * dataframe[col_name].value_counts() / len(dataframe)}))
+    print("##########################################")
+    if plot:
+        sns.countplot(x=dataframe[col_name], data=dataframe)
+        plt.show()
+
+for col in cat_cols:
+    cat_summary(df,col, True)
 print("#"*50)

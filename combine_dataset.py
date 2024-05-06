@@ -1,3 +1,5 @@
+# Description: This script combines the train and experiment datasets into a single dataset.
+
 import numpy as np
 import pandas as pd
 
