@@ -28,7 +28,7 @@ pd.set_option('display.width', get_terminal_size()[0]) # Get bigger terminal dis
 df = pd.read_csv('dataset/combined_cleaned.csv')
 
 print(df.head())
-
+print(df.dtypes)
 #######################################
 #### MODEL BUILDING AND EVALUATION ####
 #######################################
@@ -43,7 +43,7 @@ X = df.drop('TARGET', axis=1)
 y = df['TARGET']
 
 
-def base_models(X, y, scoring="roc_auc"):
+def base_models(X, y, scoring="roc_auc", cv=10, all_metrics=False):
     print("Base Models....")
     classifiers = [('LR', LogisticRegression()),
                    ('KNN', KNeighborsClassifier()),
@@ -57,12 +57,28 @@ def base_models(X, y, scoring="roc_auc"):
                    ('CatBoost', CatBoostClassifier(verbose=False))
                    ]
 
-    for name, classifier in classifiers:
-        cv_results = cross_validate(classifier, X, y, cv=10, scoring=scoring, n_jobs=-1)
-        print(f"{scoring}: {round(cv_results['test_score'].mean(), 4)} ({name}) ")
-        
-        f = open('Estimators.txt', 'a')
-        f.writelines(f"RMSE: {round(cv_results['test_score'].mean(), 4)} ({name})\n")
-        f.close()
+    if (all_metrics == True):
+        for name, classifier in classifiers:
+            cv_results = cross_validate(classifier, X, y, cv=cv, scoring=scoring, n_jobs=-1)
+            
+            print(f"Accuracy: {round(cv_results['test_accuracy'].mean(), 4)} ({name}) ")
+            print(f"F1: {round(cv_results['test_f1'].mean(), 4)} ({name}) ")
+            print(f"ROC_AUC: {round(cv_results['test_roc_auc'].mean(), 4)} ({name}) ")
+            
+            f = open('Estimators.txt', 'a')
+            f.writelines(f"Accuracy: {round(cv_results['test_accuracy'].mean(), 4)} ({name})\n")
+            f.writelines(f"F1: {round(cv_results['test_f1'].mean(), 4)} ({name})\n")
+            f.writelines(f"ROC_AUC: {round(cv_results['test_roc_auc'].mean(), 4)} ({name})\n")
+            f.close()
 
-base_models(X, y, scoring="accuracy")
+    else:
+        for name, classifier in classifiers:
+            cv_results = cross_validate(classifier, X, y, cv=cv, scoring=scoring, n_jobs=-1)
+            
+            print(f"{scoring}: {round(cv_results['test_score'].mean(), 4)} ({name}) ")
+            
+            f = open('Estimators.txt', 'a')
+            f.writelines(f"Score: {round(cv_results['test_score'].mean(), 4)} ({name})\n")
+            f.close()
+
+base_models(X, y, scoring=["accuracy", "f1", "roc_auc" ], all_metrics=True)
