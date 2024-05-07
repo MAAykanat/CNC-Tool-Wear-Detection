@@ -163,4 +163,34 @@ def hyperparameter_optimization(X, y, classifiers, cv=3, scoring="roc_auc", all_
             best_models[name] = final_model
     return best_models
 
-best_models = hyperparameter_optimization(X, y, classifiers=classifiers, cv=10, scoring=["accuracy", "f1", "roc_auc" ], all_metrics=True)
+best_models = hyperparameter_optimization(X, y, classifiers=classifiers, cv=2, scoring=["accuracy", "f1", "roc_auc" ], all_metrics=True)
+
+print(best_models["CART"].fit(X,y).feature_importances_)
+print(best_models["RF"].fit(X,y).feature_importances_)
+print(best_models["XGBoost"].fit(X,y).feature_importances_)
+print(best_models["LightGBM"].fit(X,y).feature_importances_)
+
+
+###############################
+### FEATURE IMPORTANCE PLOT ###
+###############################
+
+def plot_importance(model, features, name, num=len(X), save=False):
+    feature_imp = pd.DataFrame({'Value': model.feature_importances_, 'Feature': features.columns})
+    plt.figure(figsize=(10, 10))
+    sns.set(font_scale=1)
+    sns.barplot(x="Value", y="Feature", data=feature_imp.sort_values(by="Value",
+                                                                     ascending=False)[0:num])
+    plt.title('Features_{}'.format(name))
+    plt.tight_layout()
+    plt.show()
+    if save:
+        plt.savefig('importances_{}.png'.format(name))
+
+for model in best_models:
+    if model != "KNN":
+        best_models[model].fit(X, y)
+        final_model = best_models[model].fit(X, y)
+        plot_importance(final_model, X, name = model, save=True)
+    else:
+        pass
