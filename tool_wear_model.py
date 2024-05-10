@@ -45,6 +45,8 @@ print(df.dtypes)
 X = df.drop('TARGET', axis=1)
 y = df['TARGET']
 
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42, stratify=y)
+
 
 def base_models(X, y, scoring="roc_auc", cv=10, all_metrics=False):
     print("Base Models....")
@@ -84,7 +86,7 @@ def base_models(X, y, scoring="roc_auc", cv=10, all_metrics=False):
             f.writelines(f"Score: {round(cv_results['test_score'].mean(), 4)} ({name})\n")
             f.close()
 
-# base_models(X, y, scoring=["accuracy", "f1", "roc_auc" ], all_metrics=True)
+# base_models(X_train, y_tarin, scoring=["accuracy", "f1", "roc_auc" ], all_metrics=True)
 
 # 2. Automated Hyperparameter Optimization
 knn_params = {"n_neighbors": range(2, 50)}
@@ -164,12 +166,12 @@ def hyperparameter_optimization(X, y, classifiers, cv=3, scoring="roc_auc", all_
             best_models[name] = final_model
     return best_models
 
-best_models = hyperparameter_optimization(X, y, classifiers=classifiers, cv=10, scoring=["accuracy", "f1", "roc_auc" ], all_metrics=True)
+best_models = hyperparameter_optimization(X_train, y_train, classifiers=classifiers, cv=10, scoring=["accuracy", "f1", "roc_auc" ], all_metrics=True)
 
-print(best_models["CART"].fit(X,y).feature_importances_)
-print(best_models["RF"].fit(X,y).feature_importances_)
-print(best_models["XGBoost"].fit(X,y).feature_importances_)
-print(best_models["LightGBM"].fit(X,y).feature_importances_)
+print(best_models["CART"].fit(X_train,y_train).feature_importances_)
+print(best_models["RF"].fit(X_train,y_train).feature_importances_)
+print(best_models["XGBoost"].fit(X_train,y_train).feature_importances_)
+print(best_models["LightGBM"].fit(X_train,y_train).feature_importances_)
 
 
 ################################
@@ -190,8 +192,8 @@ def plot_importance(model, features, name, num=len(X), save=False):
 
 for model in best_models:
     if model != "KNN":
-        final_model = best_models[model].fit(X, y)
-        plot_importance(final_model, X, name = model, save=True)
+        final_model = best_models[model].fit(X_train, y_train)
+        plot_importance(final_model, X_train, name = model, save=True)
     else:
         pass
 
@@ -217,8 +219,8 @@ def plot_confusion_matrix(name, y_actual, y_pred, cmap='viridis', save=False):
     plt.show()
 
 for model in best_models:
-    model_fit=best_models[model].fit(X, y)
+    model_fit=best_models[model].fit(X_train, y_train)
     plot_confusion_matrix(name=model, 
-                          y_actual=y, 
-                          y_pred=model_fit.predict(X), 
+                          y_actual=y_test, 
+                          y_pred=model_fit.predict(X_test), 
                           save=True)
