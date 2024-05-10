@@ -86,7 +86,7 @@ def base_models(X, y, scoring="roc_auc", cv=10, all_metrics=False):
             f.writelines(f"Score: {round(cv_results['test_score'].mean(), 4)} ({name})\n")
             f.close()
 
-# base_models(X_train, y_tarin, scoring=["accuracy", "f1", "roc_auc" ], all_metrics=True)
+base_models(X_train, y_train, scoring=["accuracy", "f1", "roc_auc" ], all_metrics=True)
 
 # 2. Automated Hyperparameter Optimization
 knn_params = {"n_neighbors": range(2, 50)}

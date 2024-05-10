@@ -1,0 +1,20 @@
+Accuracy: 0.8716 (KNN)
+F1: 0.8777 (KNN)
+ROC_AUC: 0.9366 (KNN)
+KNN best params: {'n_neighbors': 3}
+Accuracy: 0.9898 (CART)
+F1: 0.9903 (CART)
+ROC_AUC: 0.9932 (CART)
+CART best params: {'max_depth': 17, 'min_samples_split': 7}
+Accuracy: 0.9911 (RF)
+F1: 0.9915 (RF)
+ROC_AUC: 0.9997 (RF)
+RF best params: {'max_depth': None, 'max_features': 7, 'min_samples_split': 15, 'n_estimators': 300}
+Accuracy: 0.9952 (XGBoost)
+F1: 0.9954 (XGBoost)
+ROC_AUC: 0.9999 (XGBoost)
+XGBoost best params: {'learning_rate': 0.1, 'max_depth': 8, 'n_estimators': 200}
+Accuracy: 0.9973 (LightGBM)
+F1: 0.9975 (LightGBM)
+ROC_AUC: 0.9999 (LightGBM)
+LightGBM best params: {'learning_rate': 0.1, 'n_estimators': 500}
