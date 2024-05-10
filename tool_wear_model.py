@@ -8,6 +8,7 @@ from shutil import get_terminal_size
 
 from sklearn.model_selection import train_test_split, cross_validate
 from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
@@ -163,7 +164,7 @@ def hyperparameter_optimization(X, y, classifiers, cv=3, scoring="roc_auc", all_
             best_models[name] = final_model
     return best_models
 
-best_models = hyperparameter_optimization(X, y, classifiers=classifiers, cv=10, scoring=["accuracy", "f1", "roc_auc" ], all_metrics=True)
+best_models = hyperparameter_optimization(X, y, classifiers=classifiers, cv=2, scoring=["accuracy", "f1", "roc_auc" ], all_metrics=True)
 
 print(best_models["CART"].fit(X,y).feature_importances_)
 print(best_models["RF"].fit(X,y).feature_importances_)
@@ -171,9 +172,9 @@ print(best_models["XGBoost"].fit(X,y).feature_importances_)
 print(best_models["LightGBM"].fit(X,y).feature_importances_)
 
 
-###############################
-### FEATURE IMPORTANCE PLOT ###
-###############################
+################################
+### PLOT- FEATURE IMPORTANCE ###
+################################
 
 def plot_importance(model, features, name, num=len(X), save=False):
     feature_imp = pd.DataFrame({'Value': model.feature_importances_, 'Feature': features.columns})
@@ -189,8 +190,35 @@ def plot_importance(model, features, name, num=len(X), save=False):
 
 for model in best_models:
     if model != "KNN":
-        best_models[model].fit(X, y)
         final_model = best_models[model].fit(X, y)
         plot_importance(final_model, X, name = model, save=True)
     else:
         pass
+
+##############################
+### PLOT- CONFUSION MATRIX ###
+##############################
+def plot_confusion_matrix(name, y_actual, y_pred, cmap='viridis', save=False):
+    cm = confusion_matrix(y_actual, y_pred)
+
+    group_names = ['TN','FP','FN','TP']
+    group_counts = ['{0:0.0f}'.format(value) for value in
+                    cm.flatten()]
+    group_percentages = ['{0:.2%}'.format(value) for value in
+                        cm.flatten()/np.sum(cm)]
+    labels = [f'{v1}\n{v2}\n{v3}' for v1, v2, v3 in
+            zip(group_names,group_counts,group_percentages)]
+    labels = np.asarray(labels).reshape(2,2)
+    sns.heatmap(cm, annot=labels, fmt='', cmap=cmap)
+    plt.title('{}'.format(name), fontsize=10)
+    if save:
+        plt.savefig('confusion_matrix_{}.png'.format(name))
+        plt.savefig('confusion_matrix_{}.tiff'.format(name))
+    plt.show()
+
+for model in best_models:
+    model_fit=best_models[model].fit(X, y)
+    plot_confusion_matrix(name=best_models[model], 
+                          y_actual=y, 
+                          y_pred=model_fit.predict(X), 
+                          save=True)
