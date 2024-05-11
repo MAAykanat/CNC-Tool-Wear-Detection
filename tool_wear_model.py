@@ -189,7 +189,7 @@ def plot_importance(model, features, name, num=len(X), save=False):
     plt.tight_layout()
     if save:
         plt.savefig('results_clearout/importances_{}.png'.format(name))
-    # plt.show()
+    plt.show()
 
 for model in best_models:
     if model != "KNN":
@@ -217,7 +217,7 @@ def plot_confusion_matrix(name, y_actual, y_pred, cmap='viridis', save=False):
     if save:
         plt.savefig('results_clearout/confusion_matrix_{}.png'.format(name))
         plt.savefig('results_clearout/confusion_matrix_{}.tiff'.format(name))
-    # plt.show()
+    plt.show()
 
 for model in best_models:
     model_fit=best_models[model].fit(X, y)
