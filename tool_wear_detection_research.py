@@ -526,6 +526,10 @@ print(df.head())
 scaler = MinMaxScaler()
 df[num_cols] = scaler.fit_transform(df[num_cols])
 
+df = df.drop("EXP_NO", axis=1)
+
+print('#'*50)
+
 print(df.head())
 print(df.shape)
 print(cat_cols)
