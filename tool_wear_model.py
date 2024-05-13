@@ -173,7 +173,7 @@ def hyperparameter_optimization(X, y, classifiers, cv=3, scoring="roc_auc", all_
 
 # best_models = hyperparameter_optimization(X, y, classifiers=classifiers, cv=10, scoring=["accuracy", "f1", "roc_auc" ], all_metrics=True)
 
-best_models = hyperparameter_optimization(X_train, y_train, classifiers=classifiers, cv=2, scoring=["accuracy", "f1", "roc_auc" ], all_metrics=True)
+best_models = hyperparameter_optimization(X_train, y_train, classifiers=classifiers, cv=10, scoring=["accuracy", "f1", "roc_auc" ], all_metrics=True)
 
 """
 print(best_models["CART"].fit(X,y).feature_importances_)
@@ -233,8 +233,7 @@ def classification_report_output(name, y_actual, y_pred, target_names=None):
 
     f = open('classification_report.txt', 'a')
     f.writelines(f"########## {name} ##########\n")
-    f.writelines(f"{classification_report(y_true=y_actual, y_pred=y_pred, 
-                                          digits=4, target_names=target_names)}\n")
+    f.writelines(f"{classification_report(y_true=y_actual, y_pred=y_pred, digits=4, target_names=target_names)}\n")
     f.writelines(f"############################\n")
     f.close()
 
