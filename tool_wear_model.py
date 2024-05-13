@@ -28,7 +28,9 @@ pd.set_option('display.float_format', lambda x: '%.3f' % x) # Show all the decim
 pd.set_option('display.width', get_terminal_size()[0]) # Get bigger terminal display width
 
 # Load the data
-df = pd.read_csv('dataset/combined_cleaned.csv')
+# df = pd.read_csv('dataset/combined_cleaned.csv') # Dropped_list
+df = pd.read_csv('combined_cleaned_without_droplist.csv') # Without Dropped_list
+
 
 print(df.head())
 print(df.dtypes)
