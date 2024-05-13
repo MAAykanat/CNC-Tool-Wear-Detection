@@ -8,7 +8,7 @@ from shutil import get_terminal_size
 
 from sklearn.model_selection import train_test_split, cross_validate
 from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
-from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay, classification_report
 
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
@@ -173,7 +173,7 @@ def hyperparameter_optimization(X, y, classifiers, cv=3, scoring="roc_auc", all_
 
 # best_models = hyperparameter_optimization(X, y, classifiers=classifiers, cv=10, scoring=["accuracy", "f1", "roc_auc" ], all_metrics=True)
 
-best_models = hyperparameter_optimization(X_train, y_train, classifiers=classifiers, cv=10, scoring=["accuracy", "f1", "roc_auc" ], all_metrics=True)
+best_models = hyperparameter_optimization(X_train, y_train, classifiers=classifiers, cv=2, scoring=["accuracy", "f1", "roc_auc" ], all_metrics=True)
 
 """
 print(best_models["CART"].fit(X,y).feature_importances_)
@@ -226,9 +226,27 @@ def plot_confusion_matrix(name, y_actual, y_pred, cmap='viridis', save=False):
         plt.savefig('results_clearout/confusion_matrix_{}.tiff'.format(name))
     plt.show()
 
+def classification_report_output(name, y_actual, y_pred, target_names=None):
+
+    print(classification_report(y_true=y_actual, y_pred=y_pred, 
+                                digits=4, target_names=target_names))
+
+    f = open('classification_report.txt', 'a')
+    f.writelines(f"########## {name} ##########\n")
+    f.writelines(f"{classification_report(y_true=y_actual, y_pred=y_pred, 
+                                          digits=4, target_names=target_names)}\n")
+    f.writelines(f"############################\n")
+    f.close()
+
 for model in best_models:
     model_fit=best_models[model].fit(X_train, y_train)
+
     plot_confusion_matrix(name=model, 
                           y_actual=y_test, 
                           y_pred=model_fit.predict(X_test), 
                           save=True)
+    
+    # 0 = Unworn, 1 = Worn --> from tool_wear_detection_research.py line 59
+    classification_report_output(name=model,
+                            y_actual=y_test,
+                            y_pred=model_fit.predict(X_test), target_names=["Unworn","Worn"])
