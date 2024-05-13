@@ -58,12 +58,13 @@ df.columns = df.columns.str.upper()
 
 df["TARGET"] = df["TARGET"].apply(lambda x: 1 if x == "worn" else 0) # Convert to binary
 
+"""
 drop_list = ['MACHINING_PROCESS', 'Z1_CURRENTFEEDBACK', 'Z1_DCBUSVOLTAGE', 
              'Z1_OUTPUTCURRENT', 'Z1_OUTPUTVOLTAGE', 'S1_COMMANDACCELERATION', 
              'S1_SYSTEMINERTIA', 'M1_CURRENT_PROGRAM_NUMBER', 'M1_SEQUENCE_NUMBER', 
              'M1_CURRENT_FEEDRATE', "EXP_NO", "Z1_COMMANDVELOCITY", "Z1_COMMANDACCELERATION"]
-
-df.drop(drop_list, axis=1, inplace=True)
+"""
+# df.drop(drop_list, axis=1, inplace=True)
 
 cat_to_numeric = ['FEEDRATE', 'CLAMP_PRESSURE'] # Convert to numeric
 
@@ -452,7 +453,7 @@ print(drop_corr_list)
 """
 
 print(df.shape) # (25286, 41)
-df.drop(drop_corr_list, axis=1, inplace=True)
+# df.drop(drop_corr_list, axis=1, inplace=True)
 print(df.shape) # (25286, 31)
 
 #######################################
@@ -497,4 +498,4 @@ print(df.head())
 print(df.shape)
 
 # 6. Save the Dataset
-df.to_csv('dataset/combined_cleaned.csv', index=False)
+df.to_csv('dataset/combined_cleaned_without_droplist.csv', index=False)
