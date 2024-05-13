@@ -66,7 +66,11 @@ drop_list = ['MACHINING_PROCESS', 'Z1_CURRENTFEEDBACK', 'Z1_DCBUSVOLTAGE',
 """
 # df.drop(drop_list, axis=1, inplace=True)
 
-cat_to_numeric = ['FEEDRATE', 'CLAMP_PRESSURE'] # Convert to numeric
+cat_to_numeric = ['FEEDRATE', 'CLAMP_PRESSURE',
+                  'Z1_COMMANDVELOCITY', 'Z1_COMMANDACCELERATION', 
+                  'Z1_CURRENTFEEDBACK', 'Z1_DCBUSVOLTAGE', 
+                  'Z1_OUTPUTCURRENT', 'Z1_OUTPUTVOLTAGE', 'S1_COMMANDACCELERATION', 
+                  'S1_SYSTEMINERTIA','M1_CURRENT_FEEDRATE'] # Convert to numeric
 
 #######################################
 ### EXPLORATORY DATA ANALYSIS - EDA ###
@@ -479,9 +483,7 @@ print(df.shape) # (25286, 31)
 
 # 4. Encoding
 # No need for encoding, there is only one categorical variable (TARGET)
-# It is already converted to binary at line 59
-
-# 5. Standardization
+# It is already converted to binary at line 59 --> for with drop_list
 
 cat_cols, num_cols, cat_but_car = grap_column_names(df)
 
@@ -491,11 +493,42 @@ for col in cat_cols:
 for col in cat_to_numeric:
     num_cols.append(col)
 
+
+cat_cols = [col for col in cat_cols if col not in ["TARGET"]]
+print(cat_cols)
+
+def one_hot_encoder(dataframe, categorical_columns, drop_first=True):
+    """
+    This function encodes the categorical variables to numericals.
+
+    Parameters
+    ----------
+    dataframe : pandas dataframe
+        The dataframe to be analyzed.
+    categorical_columns : list
+        The name of the column to be encoded.
+    drop_first : bool, optional
+        Dummy trap. The default is True.
+    Returns
+    -------
+    dataframe : pandas dataframe
+        The dataframe to be analyzed.
+    """
+    dataframe = pd.get_dummies(dataframe, columns=categorical_columns, drop_first=drop_first)
+    return dataframe
+
+df = one_hot_encoder(df, cat_cols, drop_first=True)
+
+print(df.head())
+
+# 5. Standardization
+
 scaler = MinMaxScaler()
 df[num_cols] = scaler.fit_transform(df[num_cols])
 
 print(df.head())
 print(df.shape)
+print(cat_cols)
 
 # 6. Save the Dataset
 df.to_csv('dataset/combined_cleaned_without_droplist.csv', index=False)

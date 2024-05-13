@@ -29,7 +29,7 @@ pd.set_option('display.width', get_terminal_size()[0]) # Get bigger terminal dis
 
 # Load the data
 # df = pd.read_csv('dataset/combined_cleaned.csv') # Dropped_list
-df = pd.read_csv('combined_cleaned_without_droplist.csv') # Without Dropped_list
+df = pd.read_csv('dataset/combined_cleaned_without_droplist.csv') # Without Dropped_list
 
 
 print(df.head())
