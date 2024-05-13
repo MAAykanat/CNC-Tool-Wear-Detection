@@ -1,0 +1,55 @@
+########## KNN ##########
+              precision    recall  f1-score   support
+
+      Unworn     0.9542    0.9574    0.9558      2396
+        Worn     0.9616    0.9587    0.9601      2662
+
+    accuracy                         0.9581      5058
+   macro avg     0.9579    0.9581    0.9580      5058
+weighted avg     0.9581    0.9581    0.9581      5058
+
+############################
+########## CART ##########
+              precision    recall  f1-score   support
+
+      Unworn     1.0000    1.0000    1.0000      2396
+        Worn     1.0000    1.0000    1.0000      2662
+
+    accuracy                         1.0000      5058
+   macro avg     1.0000    1.0000    1.0000      5058
+weighted avg     1.0000    1.0000    1.0000      5058
+
+############################
+########## RF ##########
+              precision    recall  f1-score   support
+
+      Unworn     1.0000    0.9996    0.9998      2396
+        Worn     0.9996    1.0000    0.9998      2662
+
+    accuracy                         0.9998      5058
+   macro avg     0.9998    0.9998    0.9998      5058
+weighted avg     0.9998    0.9998    0.9998      5058
+
+############################
+########## XGBoost ##########
+              precision    recall  f1-score   support
+
+      Unworn     1.0000    1.0000    1.0000      2396
+        Worn     1.0000    1.0000    1.0000      2662
+
+    accuracy                         1.0000      5058
+   macro avg     1.0000    1.0000    1.0000      5058
+weighted avg     1.0000    1.0000    1.0000      5058
+
+############################
+########## LightGBM ##########
+              precision    recall  f1-score   support
+
+      Unworn     1.0000    1.0000    1.0000      2396
+        Worn     1.0000    1.0000    1.0000      2662
+
+    accuracy                         1.0000      5058
+   macro avg     1.0000    1.0000    1.0000      5058
+weighted avg     1.0000    1.0000    1.0000      5058
+
+############################
