@@ -95,7 +95,7 @@ def base_models(X, y, scoring="roc_auc", cv=10, all_metrics=False):
 # base_models(X, y, scoring=["accuracy", "f1", "roc_auc" ], all_metrics=True)
 
 # 2nd Approach feed with train data
-base_models(X_train, y_train, scoring=["accuracy", "f1", "roc_auc" ],cv=5, all_metrics=True)
+base_models(X_train, y_train, scoring=["accuracy", "f1", "roc_auc" ], cv=5, all_metrics=True)
 
 # 2. Automated Hyperparameter Optimization
 knn_params = {"n_neighbors": range(2, 50)}
