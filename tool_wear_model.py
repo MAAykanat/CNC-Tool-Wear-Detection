@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import warnings
 from shutil import get_terminal_size
 
-from sklearn.model_selection import train_test_split, cross_validate
+from sklearn.model_selection import train_test_split, cross_validate, validation_curve
 from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay, classification_report
 
@@ -203,7 +203,7 @@ def plot_importance(model, features, name, num=len(X), save=False):
 for model in best_models:
     if model != "KNN":
         final_model = best_models[model].fit(X_train, y_train)
-        plot_importance(final_model, X_train, name = model, save=True)
+        plot_importance(final_model, X_train, name = model, save=False)
     else:
         pass
 
@@ -245,9 +245,39 @@ for model in best_models:
     plot_confusion_matrix(name=model, 
                           y_actual=y_test, 
                           y_pred=model_fit.predict(X_test), 
-                          save=True)
+                          save=False)
     
     # 0 = Unworn, 1 = Worn --> from tool_wear_detection_research.py line 59
     classification_report_output(name=model,
                             y_actual=y_test,
                             y_pred=model_fit.predict(X_test), target_names=["Unworn","Worn"])
+    
+def val_curve_params(model, X, y, param_name, param_range, scoring="roc_auc", cv=10):
+    train_score, test_score = validation_curve(
+        model, X=X, y=y, param_name=param_name, param_range=param_range, scoring=scoring, cv=cv)
+
+    mean_train_score = np.mean(train_score, axis=1)
+    mean_test_score = np.mean(test_score, axis=1)
+
+    plt.plot(param_range, mean_train_score,
+             label="Training Score", color='b')
+
+    plt.plot(param_range, mean_test_score,
+             label="Validation Score", color='g')
+
+    plt.title(f"Validation Curve for {type(model).__name__}")
+    plt.xlabel(f"Number of {param_name}")
+    plt.ylabel(f"{scoring}")
+    plt.tight_layout()
+    plt.legend(loc='best')
+    plt.savefig('Learning_Curve_{}.png'.format("LightGBM"))
+    plt.show(block=True)
+
+
+lightgbm_params = {"learning_rate": [0.01, 0.1],
+                   "n_estimators": [300, 500]} 
+
+lightgbm = LGBMClassifier(random_state=42)
+
+for i in range(len(lightgbm_params)):
+    val_curve_params(lightgbm, X_train, y_train, lightgbm_params[i][0], lightgbm_params[i][1])
