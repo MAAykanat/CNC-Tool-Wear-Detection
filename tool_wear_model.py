@@ -95,7 +95,7 @@ def base_models(X, y, scoring="roc_auc", cv=10, all_metrics=False):
 # base_models(X, y, scoring=["accuracy", "f1", "roc_auc" ], all_metrics=True)
 
 # 2nd Approach feed with train data
-base_models(X_train, y_train, scoring=["accuracy", "f1", "roc_auc" ], cv=5, all_metrics=True)
+base_models(X_train, y_train, scoring=["accuracy", "f1", "roc_auc" ], cv=10, all_metrics=True)
 
 # 2. Automated Hyperparameter Optimization
 knn_params = {"n_neighbors": range(2, 50)}
@@ -175,7 +175,7 @@ def hyperparameter_optimization(X, y, classifiers, cv=3, scoring="roc_auc", all_
 
 # best_models = hyperparameter_optimization(X, y, classifiers=classifiers, cv=10, scoring=["accuracy", "f1", "roc_auc" ], all_metrics=True)
 
-best_models = hyperparameter_optimization(X_train, y_train, classifiers=classifiers, cv=5, scoring=["accuracy", "f1", "roc_auc" ], all_metrics=True)
+best_models = hyperparameter_optimization(X_train, y_train, classifiers=classifiers, cv=10, scoring=["accuracy", "f1", "roc_auc" ], all_metrics=True)
 
 """
 print(best_models["CART"].fit(X,y).feature_importances_)
@@ -270,10 +270,10 @@ def val_curve_params(model, X, y, param_name, param_range, scoring="roc_auc", cv
     plt.ylabel(f"{scoring}")
     plt.tight_layout()
     plt.legend(loc='best')
-    plt.savefig('Learning_Curve_{}.png'.format("LightGBM"))
+    plt.savefig(f"Validation Curve for {type(model).__name__}.png")
     plt.show(block=True)
 
-
+"""
 lightgbm_params = {"learning_rate": [0.01, 0.1],
                    "n_estimators": [300, 500]} 
 
@@ -281,3 +281,4 @@ lightgbm = LGBMClassifier(random_state=42)
 
 for i in range(len(lightgbm_params)):
     val_curve_params(lightgbm, X_train, y_train, lightgbm_params[i][0], lightgbm_params[i][1])
+"""
