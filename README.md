@@ -4,6 +4,8 @@
    * [Dataset](#dataset)
    * [Requirements](#requirements)
    * [Code Explanation](#code-explanation)
+   * [Methods](#methods)
+   * [#Implemented Machine Learning Algorithms](#implementedmachine-learning-algorithms)
    * [Authors](#authors)
 
 # About Repo
@@ -12,10 +14,12 @@
 
 # Dataset
 
-- Link of dataset
+Link of dataset:
+
     ```
     https://www.kaggle.com/datasets/shasun/tool-wear-detection-in-cnc-mill
     ```
+
 Dataset created by System-level Manufacturing and Automation Research Testbed (SMART) at the University of Michigan in April 2018.
 
 **Inputs (features)**
@@ -54,6 +58,7 @@ Use given requirement.txt file in repo.
   ```terminal
   pip install -r requirements/requirements.txt
   ```
+
 # Code Explanation
     3 main code to handle research
         - combine_dataset.py
@@ -81,3 +86,25 @@ Use given requirement.txt file in repo.
     Automated code for modelling, hyperparameter optimization and evaluation results.
     
     Results can be given with/without graph as desired.
+
+# Methods
+- There is created drop list according to correlation is higher than 90%. 
+    
+    - By using this list 2 different dataset created
+        - combined_cleaned.csv --> drop Drop_list 
+        - combined_cleaned_without_droplist.csv --> not drop Drop_list
+
+    - Model splitted into train and test sets (80-20)
+        - With stratify
+        - Without stratfy
+
+- 10 Fold-Cross Validation implemented
+
+# Implemented Machine Learning Algorithms
+
+- KNN
+- Decision Tree (CART)
+- Random Forest
+- XGBoost
+- LightGBM
+
