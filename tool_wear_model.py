@@ -203,7 +203,7 @@ def plot_importance(model, features, name, num=len(X), save=False):
 for model in best_models:
     if model != "KNN":
         final_model = best_models[model].fit(X_train, y_train)
-        plot_importance(final_model, X_train, name = model, save=False)
+        plot_importance(final_model, X_train, name = model, save=True)
     else:
         pass
 
@@ -245,7 +245,7 @@ for model in best_models:
     plot_confusion_matrix(name=model, 
                           y_actual=y_test, 
                           y_pred=model_fit.predict(X_test), 
-                          save=False)
+                          save=True)
     
     # 0 = Unworn, 1 = Worn --> from tool_wear_detection_research.py line 59
     classification_report_output(name=model,
