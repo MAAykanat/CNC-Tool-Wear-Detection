@@ -5,7 +5,9 @@
    * [Requirements](#requirements)
    * [Code Explanation](#code-explanation)
    * [Methods](#methods)
-   * [#Implemented Machine Learning Algorithms](#implementedmachine-learning-algorithms)
+   * [Implemented Machine Learning Algorithms](#implementedmachine-learning-algorithms)
+   * [Discussion](#discussion)
+   * [Referance](#referance)
    * [Authors](#authors)
 
 # About Repo
@@ -331,3 +333,10 @@ EXP_NO definitely should dropped out, since it memorize according to experiment 
     <td style="text-align:center;"><b>0.9974<</b></td>
   </tr>
 </table>
+
+# Discussion
+
+# Referance
+
+# Authors
+Muhammet Ali Aykanat
