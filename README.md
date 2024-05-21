@@ -109,6 +109,25 @@ Use given requirement.txt file in repo.
 - LightGBM
 
 # Results
+Drop List:
+- MACHINING_PROCESS,
+- Z1_CURRENTFEEDBACK,
+- Z1_DCBUSVOLTAGE,
+- Z1_OUTPUTCURRENT,
+- Z1_OUTPUTVOLTAGE,
+- S1_COMMANDACCELERATION,
+- S1_SYSTEMINERTIA,
+- M1_CURRENT_PROGRAM_NUMBER,
+- M1_SEQUENCE_NUMBER,
+- M1_CURRENT_FEEDRATE,
+- EXP_NO,
+- Z1_COMMANDVELOCITY,
+- Z1_COMMANDACCELERATION
+
+EXP_NO definitely should dropped out, since it memorize according to experiment numbers.
+
+---
+
     Without Drop List 
 
 <table>
@@ -121,7 +140,7 @@ Use given requirement.txt file in repo.
     <td style="text-align:center;" colspan="2">LightGBM</td>
   </tr>
   <tr>
-    <td>How to Splitted</td>
+    <td><b>How to Splitted</b></td>
     <td>TVT</td>
     <td>Stratify</td>
     <td>TVT</td>
@@ -174,4 +193,141 @@ Use given requirement.txt file in repo.
   </tr>
 </table>
 
+    With Drop List 
 
+<table>
+  <tr>
+    <td></td>
+    <td style="text-align:center;" colspan="2">KNN</td>
+    <td style="text-align:center;" colspan="2">Decision Tree</td>
+    <td style="text-align:center;" colspan="2">Random Forest</td>
+    <td style="text-align:center;" colspan="2">XGBoost</td>
+    <td style="text-align:center;" colspan="2">LightGBM</td>
+  </tr>
+  <tr>
+    <td><b>How to Splitted</b></td>
+    <td>TVT</td>
+    <td>Stratify</td>
+    <td>TVT</td>
+    <td>Stratify</td>
+    <td>TVT</td>
+    <td>Stratify</td>
+    <td>TVT</td>
+    <td>Stratify</td>
+    <td>TVT</td>
+    <td>Stratify</td>
+  </tr>
+  <tr>
+    <td>Base Model</td>
+    <td><b>0.8718</b></td>
+    <td>0.8687</td>
+    <td>0.987</td>
+    <td><b>0.9895</b></td>
+    <td>0.9887</td>
+    <td><b>0.9899</b></td>
+    <td>0.9945</td>
+    <td><b>0.9951</b></td>
+    <td><b>0.9951</b></td>
+    <td>0.995</td>
+  </tr>
+  <tr>
+    <td>Hyperparameter</td>
+    <td><b>0.8722</b></td>
+    <td>0.8716</td>
+    <td><b>0.9905</b></td>
+    <td>0.9898</td>
+    <td>0.9905</td>
+    <td><b>0.9906</b></td>
+    <td>0.9951</td>
+    <td><b>0.9952</b></td>
+    <td>0.997</td>
+    <td><b>0.9973</b></td>
+  </tr>
+  <tr>
+    <td>Test</td>
+    <td><b>0.8778</b></td>
+    <td>0.8764</td>
+    <td>0.9885</td>
+    <td><b>0.9893</b></td>
+    <td>0.9931</td>
+    <td><b>0.9891</b></td>
+    <td>0.9974</td>
+    <td>0.9962</td>
+    <td><b>0.9984</b></td>
+    <td>0.9974</td>
+  </tr>
+</table>
+
+    Classification Report - Without Drop List
+
+<table>
+  <tr>
+    <td></td>
+    <td style="text-align:center;" colspan="1">KNN</td>
+    <td style="text-align:center;" colspan="1">Decision Tree</td>
+    <td style="text-align:center;" colspan="1">Random Forest</td>
+    <td style="text-align:center;" colspan="1">XGBoost</td>
+    <td style="text-align:center;" colspan="1">LightGBM</td>
+  </tr>
+  <tr>
+    <td>Base Model</td>
+    <td style="text-align:center;">0.9147</td>
+    <td style="text-align:center;">0.9884</td>
+    <td style="text-align:center;">0.9943</td>
+    <td style="text-align:center;"><b>0.996<</b></td>
+    <td style="text-align:center;">0.9959</td>
+  </tr>
+  <tr>
+    <td>Hyperparameter</td>
+    <td style="text-align:center;">0.9242</td>
+    <td style="text-align:center;">0.9883</td>
+    <td style="text-align:center;">0.9932</td>
+    <td style="text-align:center;">0.9968</td>
+    <td style="text-align:center;"><b>0.9978<</b></td>
+  </tr>
+  <tr>
+    <td >Test</td>
+    <td style="text-align:center;">0.9306</td>
+    <td style="text-align:center;">0.9866</td>
+    <td style="text-align:center;">0.9921</td>
+    <td style="text-align:center;">0.9962</td>
+    <td style="text-align:center;"><b>0.9972<</b></td>
+  </tr>
+</table>
+
+    Classification Report - With Drop List
+
+<table>
+  <tr>
+    <td></td>
+    <td style="text-align:center;" colspan="1">KNN</td>
+    <td style="text-align:center;" colspan="1">Decision Tree</td>
+    <td style="text-align:center;" colspan="1">Random Forest</td>
+    <td style="text-align:center;" colspan="1">XGBoost</td>
+    <td style="text-align:center;" colspan="1">LightGBM</td>
+  </tr>
+  <tr>
+    <td>Base Model</td>
+    <td style="text-align:center;">0.8687</td>
+    <td style="text-align:center;">0.9895</td>
+    <td style="text-align:center;">0.9899</td>
+    <td style="text-align:center;"><b>0.9951<</b></td>
+    <td style="text-align:center;">0.995</td>
+  </tr>
+  <tr>
+    <td>Hyperparameter</td>
+    <td style="text-align:center;">0.8716</td>
+    <td style="text-align:center;">0.9898</td>
+    <td style="text-align:center;">0.9906</td>
+    <td style="text-align:center;">0.9952</td>
+    <td style="text-align:center;"><b>0.9973<</b></td>
+  </tr>
+  <tr>
+    <td >Test</td>
+    <td style="text-align:center;">0.8764</td>
+    <td style="text-align:center;">0.9893</td>
+    <td style="text-align:center;">0.9891</td>
+    <td style="text-align:center;">0.9962</td>
+    <td style="text-align:center;"><b>0.9974<</b></td>
+  </tr>
+</table>
