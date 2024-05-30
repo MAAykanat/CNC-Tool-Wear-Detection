@@ -5,7 +5,8 @@
    * [Requirements](#requirements)
    * [Code Explanation](#code-explanation)
    * [Methods](#methods)
-   * [Implemented Machine Learning Algorithms](#implementedmachine-learning-algorithms)
+   * [Implemented Machine Learning Algorithms](#implemented-machine-learning-algorithms)
+   * [Results](#results)
    * [Discussion](#discussion)
    * [Referance](#referance)
    * [Authors](#authors)
@@ -18,9 +19,9 @@
 
 Link of dataset:
 
-    ```
+   
     https://www.kaggle.com/datasets/shasun/tool-wear-detection-in-cnc-mill
-    ```
+   
 
 Dataset created by System-level Manufacturing and Automation Research Testbed (SMART) at the University of Michigan in April 2018.
 
