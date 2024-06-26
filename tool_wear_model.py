@@ -55,7 +55,7 @@ y = df['TARGET']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42, stratify=y)
 
 
-def base_models(X, y, scoring="roc_auc", cv=10, all_metrics=False):
+def base_models(X, y, scoring="roc_auc", cv=3, all_metrics=False):
     print("Base Models....")
     classifiers = [('LR', LogisticRegression()),
                    ('KNN', KNeighborsClassifier()),
@@ -97,7 +97,7 @@ def base_models(X, y, scoring="roc_auc", cv=10, all_metrics=False):
 # base_models(X, y, scoring=["accuracy", "f1", "roc_auc" ], all_metrics=True)
 
 # 2nd Approach feed with train data
-base_models(X_train, y_train, scoring=["accuracy", "f1", "roc_auc" ], cv=10, all_metrics=True)
+base_models(X_train, y_train, scoring=["accuracy", "f1", "roc_auc" ], cv=3, all_metrics=True)
 
 # 2. Automated Hyperparameter Optimization
 knn_params = {"n_neighbors": range(2, 50)}
@@ -175,9 +175,9 @@ def hyperparameter_optimization(X, y, classifiers, cv=3, scoring="roc_auc", all_
             best_models[name] = final_model
     return best_models
 
-# best_models = hyperparameter_optimization(X, y, classifiers=classifiers, cv=10, scoring=["accuracy", "f1", "roc_auc" ], all_metrics=True)
+# best_models = hyperparameter_optimization(X, y, classifiers=classifiers, cv=3, scoring=["accuracy", "f1", "roc_auc" ], all_metrics=True)
 
-best_models = hyperparameter_optimization(X_train, y_train, classifiers=classifiers, cv=10, scoring=["accuracy", "f1", "roc_auc" ], all_metrics=True)
+best_models = hyperparameter_optimization(X_train, y_train, classifiers=classifiers, cv=3, scoring=["accuracy", "f1", "roc_auc" ], all_metrics=True)
 
 """
 print(best_models["CART"].fit(X,y).feature_importances_)
@@ -205,7 +205,7 @@ def plot_importance(model, features, name, num=len(X), save=False):
 for model in best_models:
     if model != "KNN":
         final_model = best_models[model].fit(X_train, y_train)
-        plot_importance(final_model, X_train, name = model, save=False)
+        plot_importance(final_model, X_train, name = model, save=True)
     else:
         pass
 
@@ -247,14 +247,14 @@ for model in best_models:
     plot_confusion_matrix(name=model, 
                           y_actual=y_test, 
                           y_pred=model_fit.predict(X_test), 
-                          save=False)
+                          save=True)
     
     # 0 = Unworn, 1 = Worn --> from tool_wear_detection_research.py line 59
     classification_report_output(name=model,
                             y_actual=y_test,
                             y_pred=model_fit.predict(X_test), target_names=["Unworn","Worn"])
     
-def val_curve_params(model, X, y, param_name, param_range, scoring="roc_auc", cv=10):
+def val_curve_params(model, X, y, param_name, param_range, scoring="roc_auc", cv=3):
     train_score, test_score = validation_curve(
         model, X=X, y=y, param_name=param_name, param_range=param_range, scoring=scoring, cv=cv)
 
@@ -275,25 +275,25 @@ def val_curve_params(model, X, y, param_name, param_range, scoring="roc_auc", cv
     plt.savefig(f"Validation Curve for {type(model).__name__}.png")
     plt.show(block=True)
 
-def voting_classifier(best_models, X, y):
+def voting_classifier(best_models, X, y, cv=3):
     print("Voting Classifier...")
     voting_clf = VotingClassifier(estimators=[('KNN', best_models["KNN"]), ('RF', best_models["RF"]),
                                               ('LightGBM', best_models["LightGBM"])],
                                   voting='soft').fit(X, y)
-    cv_results = cross_validate(voting_clf, X, y, cv=10, scoring=["accuracy", "f1", "roc_auc"])
+    cv_results = cross_validate(voting_clf, X, y, cv=cv, scoring=["accuracy", "f1", "roc_auc"])
     print(f"Accuracy: {cv_results['test_accuracy'].mean()}")
     print(f"F1Score: {cv_results['test_f1'].mean()}")
     print(f"ROC_AUC: {cv_results['test_roc_auc'].mean()}")
     
     f = open('Ensemble_Results.txt', 'a')
-    f.writelines(f"Accuracy: {cv_results['test_accuracy'].mean()}")
-    f.writelines(f"F1Score: {cv_results['test_f1'].mean()}")
-    f.writelines(f"ROC_AUC: {cv_results['test_roc_auc'].mean()}")
+    f.writelines(f"Accuracy: {cv_results['test_accuracy'].mean()}\n")
+    f.writelines(f"F1Score: {cv_results['test_f1'].mean()}\n")
+    f.writelines(f"ROC_AUC: {cv_results['test_roc_auc'].mean()}\n")
     f.close()
     
     return voting_clf
 
-voting_clf=voting_classifier(best_models=best_models, X=X_train, y=y_train)
+voting_clf=voting_classifier(best_models=best_models, X=X_train, y=y_train, cv=3)
 
 joblib.dump(voting_clf, "voting_clf.pkl")
 
