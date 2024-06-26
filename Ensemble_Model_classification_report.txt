@@ -1,0 +1,11 @@
+########## Voting Classifier-Soft ##########
+              precision    recall  f1-score   support
+
+      Unworn     0.9958    0.9967    0.9962      2396
+        Worn     0.9970    0.9962    0.9966      2662
+
+    accuracy                         0.9964      5058
+   macro avg     0.9964    0.9965    0.9964      5058
+weighted avg     0.9964    0.9964    0.9964      5058
+
+############################
