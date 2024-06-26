@@ -14,10 +14,12 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, GradientBoostingClassifier
+from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, GradientBoostingClassifier, VotingClassifier
 from xgboost import XGBClassifier
 from lightgbm import LGBMClassifier
 from catboost import CatBoostClassifier
+
+import joblib
 
 warnings.filterwarnings('ignore')
 
@@ -203,7 +205,7 @@ def plot_importance(model, features, name, num=len(X), save=False):
 for model in best_models:
     if model != "KNN":
         final_model = best_models[model].fit(X_train, y_train)
-        plot_importance(final_model, X_train, name = model, save=True)
+        plot_importance(final_model, X_train, name = model, save=False)
     else:
         pass
 
@@ -245,7 +247,7 @@ for model in best_models:
     plot_confusion_matrix(name=model, 
                           y_actual=y_test, 
                           y_pred=model_fit.predict(X_test), 
-                          save=True)
+                          save=False)
     
     # 0 = Unworn, 1 = Worn --> from tool_wear_detection_research.py line 59
     classification_report_output(name=model,
@@ -273,12 +275,25 @@ def val_curve_params(model, X, y, param_name, param_range, scoring="roc_auc", cv
     plt.savefig(f"Validation Curve for {type(model).__name__}.png")
     plt.show(block=True)
 
-"""
-lightgbm_params = {"learning_rate": [0.01, 0.1],
-                   "n_estimators": [300, 500]} 
+def voting_classifier(best_models, X, y):
+    print("Voting Classifier...")
+    voting_clf = VotingClassifier(estimators=[('KNN', best_models["KNN"]), ('RF', best_models["RF"]),
+                                              ('LightGBM', best_models["LightGBM"])],
+                                  voting='soft').fit(X, y)
+    cv_results = cross_validate(voting_clf, X, y, cv=10, scoring=["accuracy", "f1", "roc_auc"])
+    print(f"Accuracy: {cv_results['test_accuracy'].mean()}")
+    print(f"F1Score: {cv_results['test_f1'].mean()}")
+    print(f"ROC_AUC: {cv_results['test_roc_auc'].mean()}")
+    
+    f = open('Ensemble_Results.txt', 'a')
+    f.writelines(f"Accuracy: {cv_results['test_accuracy'].mean()}")
+    f.writelines(f"F1Score: {cv_results['test_f1'].mean()}")
+    f.writelines(f"ROC_AUC: {cv_results['test_roc_auc'].mean()}")
+    f.close()
+    
+    return voting_clf
 
-lightgbm = LGBMClassifier(random_state=42)
+voting_clf=voting_classifier(best_models=best_models, X=X_train, y=y_train)
 
-for i in range(len(lightgbm_params)):
-    val_curve_params(lightgbm, X_train, y_train, lightgbm_params[i][0], lightgbm_params[i][1])
-"""
+joblib.dump(voting_clf, "voting_clf.pkl")
+
