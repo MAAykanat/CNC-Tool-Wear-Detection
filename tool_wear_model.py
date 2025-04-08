@@ -31,8 +31,7 @@ pd.set_option('display.width', get_terminal_size()[0]) # Get bigger terminal dis
 
 # Load the data
 # df = pd.read_csv('dataset/combined_cleaned.csv') # Dropped_list
-df = pd.read_csv('dataset/combined_cleaned_without_droplist.csv') # Without Dropped_list
-
+df = pd.read_csv('dataset/aggragated_train_cleaned.csv')
 
 print(df.head())
 print(df.dtypes)
@@ -199,7 +198,7 @@ def plot_importance(model, features, name, num=len(X), save=False):
     plt.title('Features_{}'.format(name))
     plt.tight_layout()
     if save:
-        plt.savefig('results_clearout/importances_{}.png'.format(name))
+        plt.savefig('results/importances_{}.png'.format(name))
     plt.show()
 
 for model in best_models:
@@ -226,8 +225,8 @@ def plot_confusion_matrix(name, y_actual, y_pred, cmap='viridis', save=False):
     sns.heatmap(cm, annot=labels, fmt='', cmap=cmap)
     plt.title('{}'.format(name), fontsize=10)
     if save:
-        plt.savefig('results_clearout/confusion_matrix_{}.png'.format(name))
-        plt.savefig('results_clearout/confusion_matrix_{}.tiff'.format(name))
+        plt.savefig('results/confusion_matrix_{}.png'.format(name))
+        plt.savefig('results/confusion_matrix_{}.tiff'.format(name))
     plt.show()
 
 def classification_report_output(name, y_actual, y_pred, target_names=None):
@@ -286,6 +285,7 @@ def voting_classifier(best_models, X, y, cv=3):
     print(f"ROC_AUC: {cv_results['test_roc_auc'].mean()}")
     
     f = open('Ensemble_Results.txt', 'a')
+    
     f.writelines(f"Accuracy: {cv_results['test_accuracy'].mean()}\n")
     f.writelines(f"F1Score: {cv_results['test_f1'].mean()}\n")
     f.writelines(f"ROC_AUC: {cv_results['test_roc_auc'].mean()}\n")
@@ -295,5 +295,22 @@ def voting_classifier(best_models, X, y, cv=3):
 
 voting_clf=voting_classifier(best_models=best_models, X=X_train, y=y_train, cv=3)
 
-joblib.dump(voting_clf, "voting_clf.pkl")
+classification_report_output(name="Voting Classifier",
+                            y_actual=y_test,
+                            y_pred=voting_clf.predict(X_test), target_names=["Unworn","Worn"])
+
+plot_confusion_matrix(name="Voting Classifier", 
+                          y_actual=y_test, 
+                          y_pred=voting_clf.predict(X_test), 
+                          save=True)
+
+###################
+### Save Models ###
+###################
+
+joblib.dump(best_models["KNN"], "models/knn_model.pkl")
+joblib.dump(best_models["RF"], "models/rf_model.pkl")
+joblib.dump(best_models["LightGBM"], "models/lightgbm_model.pkl")
+joblib.dump(voting_clf, "models/voting_clf.pkl")
+
 

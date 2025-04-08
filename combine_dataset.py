@@ -51,22 +51,6 @@ df = pd.concat(frames, axis=0, ignore_index=True)
 print(df.head())
 print(df.shape)
 
-# Shuffle the dataset
-df = df.sample(frac=1).reset_index(drop=True)
-
-# Define train and test sets
-test_size = int(0.2 * df.shape[0])
-
-test_data = df.iloc[:test_size] # First 20% of the data for testing after shuffling
-train_data = df.iloc[test_size:] # Remaining 80% for training after shuffling
-
-# Save the dataset
-
-df.to_csv('dataset/aggregated.csv', index=False)
-test_data.to_csv('dataset/aggregated_test.csv', index=False)
-train_data.to_csv('dataset/aggregated_train.csv', index=False)
-
-
 ############################
 ####### END OF FILE ########
 ############################

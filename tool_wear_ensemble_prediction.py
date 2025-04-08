@@ -19,17 +19,39 @@ def classification_report_output(name, y_actual, y_pred, target_names=None):
     f.writelines(f"############################\n")
     f.close()
 
-df = pd.read_csv('dataset/combined_cleaned_without_droplist.csv') # Without Dropped_list
+df = pd.read_csv('dataset/aggragated_test_cleaned.csv')
 
 X = df.drop('TARGET', axis=1)
 y = df['TARGET']
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42, stratify=y)
 
-model = joblib.load('results_clearout/3-Fold Stratify/voting_clf.pkl')
+model_voting = joblib.load('models/voting_clf.pkl')
+model_knn = joblib.load('models/knn_model.pkl')
+model_rf = joblib.load('models/rf_model.pkl')
+model_lightgmb = joblib.load('models/lightgbm_model.pkl')
 
 
+print("########## Ensemble Model ##########")
 classification_report_output(name="Voting Classifier-Soft",
                             y_actual=y_test,
-                            y_pred=model.predict(X_test), target_names=["Unworn","Worn"])
-    
+                            y_pred=model_voting.predict(X_test), target_names=["Unworn","Worn"])
+print("############################")
+
+print("########## KNN ##########")
+classification_report_output(name="KNN",
+                            y_actual=y_test,
+                            y_pred=model_knn.predict(X_test), target_names=["Unworn","Worn"])
+print("############################")
+
+print("########## Random Forest ##########")
+classification_report_output(name="RF",
+                            y_actual=y_test,
+                            y_pred=model_rf.predict(X_test), target_names=["Unworn","Worn"])
+print("############################")
+
+print("########## LightGBM ##########")
+classification_report_output(name="LightGBM",
+                            y_actual=y_test,
+                            y_pred=model_lightgmb.predict(X_test), target_names=["Unworn","Worn"])
+print("############################")

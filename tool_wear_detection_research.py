@@ -49,8 +49,7 @@ pd.set_option('display.float_format', lambda x: '%.3f' % x) # Show all the decim
 pd.set_option('display.width', get_terminal_size()[0]) # Get bigger terminal display width
 
 # Load the dataset
-# df = pd.read_csv('dataset/aggregated_train.csv')
-df = pd.read_csv('dataset/aggregated_test.csv')
+df = pd.read_csv('dataset/aggregated.csv')
 
 # Capitalize the column names
 df.columns = df.columns.str.upper()
@@ -536,5 +535,15 @@ print(df.shape)
 print(cat_cols)
 
 # 6. Save the Dataset
-# df.to_csv('dataset/aggragated_train_cleaned.csv', index=False)
-df.to_csv('dataset/aggragated_test_cleaned.csv', index=False)
+df.to_csv('dataset/aggragated_cleaned.csv', index=False)
+
+# Shuffle dataset
+df = df.sample(frac=1).reset_index(drop=True)
+
+# Save train and test sets
+test_size = int(0.2 * df.shape[0])
+test_data = df[:test_size]
+train_data = df[test_size:]
+
+train_data.to_csv('dataset/aggragated_train_cleaned.csv', index=False)
+test_data.to_csv('dataset/aggragated_test_cleaned.csv', index=False)
