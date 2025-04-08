@@ -31,7 +31,7 @@ pd.set_option('display.width', get_terminal_size()[0]) # Get bigger terminal dis
 
 # Load the data
 # df = pd.read_csv('dataset/combined_cleaned.csv') # Dropped_list
-df = pd.read_csv('dataset/aggragated_train_cleaned.csv')
+df = pd.read_csv('dataset/aggregated_train_cleaned.csv')
 
 print(df.head())
 print(df.dtypes)
@@ -54,7 +54,7 @@ y = df['TARGET']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42, stratify=y)
 
 
-def base_models(X, y, scoring="roc_auc", cv=3, all_metrics=False):
+def base_models(X, y, scoring="roc_auc", cv=5, all_metrics=False):
     print("Base Models....")
     classifiers = [('LR', LogisticRegression()),
                    ('KNN', KNeighborsClassifier()),
@@ -96,7 +96,7 @@ def base_models(X, y, scoring="roc_auc", cv=3, all_metrics=False):
 # base_models(X, y, scoring=["accuracy", "f1", "roc_auc" ], all_metrics=True)
 
 # 2nd Approach feed with train data
-base_models(X_train, y_train, scoring=["accuracy", "f1", "roc_auc" ], cv=3, all_metrics=True)
+base_models(X_train, y_train, scoring=["accuracy", "f1", "roc_auc" ], cv=5, all_metrics=True)
 
 # 2. Automated Hyperparameter Optimization
 knn_params = {"n_neighbors": range(2, 50)}
@@ -122,7 +122,7 @@ classifiers = [('KNN', KNeighborsClassifier(), knn_params),
                 ('XGBoost', XGBClassifier(use_label_encoder=False, eval_metric='logloss'), xgboost_params),
                ('LightGBM', LGBMClassifier(), lightgbm_params)]
 
-def hyperparameter_optimization(X, y, classifiers, cv=3, scoring="roc_auc", all_metrics=False):
+def hyperparameter_optimization(X, y, classifiers, cv=5, scoring="roc_auc", all_metrics=False):
     print("Hyperparameter Optimization....")
     best_models = {}
 
@@ -174,9 +174,9 @@ def hyperparameter_optimization(X, y, classifiers, cv=3, scoring="roc_auc", all_
             best_models[name] = final_model
     return best_models
 
-# best_models = hyperparameter_optimization(X, y, classifiers=classifiers, cv=3, scoring=["accuracy", "f1", "roc_auc" ], all_metrics=True)
+# best_models = hyperparameter_optimization(X, y, classifiers=classifiers, cv=5, scoring=["accuracy", "f1", "roc_auc" ], all_metrics=True)
 
-best_models = hyperparameter_optimization(X_train, y_train, classifiers=classifiers, cv=3, scoring=["accuracy", "f1", "roc_auc" ], all_metrics=True)
+best_models = hyperparameter_optimization(X_train, y_train, classifiers=classifiers, cv=5, scoring=["accuracy", "f1", "roc_auc" ], all_metrics=True)
 
 """
 print(best_models["CART"].fit(X,y).feature_importances_)
@@ -253,7 +253,7 @@ for model in best_models:
                             y_actual=y_test,
                             y_pred=model_fit.predict(X_test), target_names=["Unworn","Worn"])
     
-def val_curve_params(model, X, y, param_name, param_range, scoring="roc_auc", cv=3):
+def val_curve_params(model, X, y, param_name, param_range, scoring="roc_auc", cv=5):
     train_score, test_score = validation_curve(
         model, X=X, y=y, param_name=param_name, param_range=param_range, scoring=scoring, cv=cv)
 
@@ -274,7 +274,7 @@ def val_curve_params(model, X, y, param_name, param_range, scoring="roc_auc", cv
     plt.savefig(f"Validation Curve for {type(model).__name__}.png")
     plt.show(block=True)
 
-def voting_classifier(best_models, X, y, cv=3):
+def voting_classifier(best_models, X, y, cv=5):
     print("Voting Classifier...")
     voting_clf = VotingClassifier(estimators=[('KNN', best_models["KNN"]), ('RF', best_models["RF"]),
                                               ('LightGBM', best_models["LightGBM"])],
@@ -293,7 +293,7 @@ def voting_classifier(best_models, X, y, cv=3):
     
     return voting_clf
 
-voting_clf=voting_classifier(best_models=best_models, X=X_train, y=y_train, cv=3)
+voting_clf=voting_classifier(best_models=best_models, X=X_train, y=y_train, cv=5)
 
 classification_report_output(name="Voting Classifier",
                             y_actual=y_test,

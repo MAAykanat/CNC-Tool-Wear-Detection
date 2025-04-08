@@ -535,7 +535,7 @@ print(df.shape)
 print(cat_cols)
 
 # 6. Save the Dataset
-df.to_csv('dataset/aggragated_cleaned.csv', index=False)
+df.to_csv('dataset/aggregated_cleaned.csv', index=False)
 
 # Shuffle dataset
 df = df.sample(frac=1).reset_index(drop=True)
@@ -545,5 +545,10 @@ test_size = int(0.2 * df.shape[0])
 test_data = df[:test_size]
 train_data = df[test_size:]
 
-train_data.to_csv('dataset/aggragated_train_cleaned.csv', index=False)
-test_data.to_csv('dataset/aggragated_test_cleaned.csv', index=False)
+train_data.to_csv('dataset/aggregated_train_cleaned.csv', index=False)
+print("Train dataset shape: ",train_data.shape)
+
+print("#"*50)
+
+test_data.to_csv('dataset/aggregated_test_cleaned.csv', index=False)
+print("Test dataset shape: ",test_data.shape)

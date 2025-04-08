@@ -1,0 +1,44 @@
+########## Voting Classifier-Soft ##########
+              precision    recall  f1-score   support
+
+      Unworn     0.9961    0.9974    0.9968      2332
+        Worn     0.9978    0.9967    0.9972      2725
+
+    accuracy                         0.9970      5057
+   macro avg     0.9970    0.9971    0.9970      5057
+weighted avg     0.9970    0.9970    0.9970      5057
+
+############################
+########## KNN ##########
+              precision    recall  f1-score   support
+
+      Unworn     0.9110    0.9168    0.9139      2332
+        Worn     0.9284    0.9233    0.9259      2725
+
+    accuracy                         0.9203      5057
+   macro avg     0.9197    0.9201    0.9199      5057
+weighted avg     0.9204    0.9203    0.9203      5057
+
+############################
+########## RF ##########
+              precision    recall  f1-score   support
+
+      Unworn     0.9931    0.9863    0.9897      2332
+        Worn     0.9883    0.9941    0.9912      2725
+
+    accuracy                         0.9905      5057
+   macro avg     0.9907    0.9902    0.9904      5057
+weighted avg     0.9905    0.9905    0.9905      5057
+
+############################
+########## LightGBM ##########
+              precision    recall  f1-score   support
+
+      Unworn     0.9970    0.9961    0.9966      2332
+        Worn     0.9967    0.9974    0.9971      2725
+
+    accuracy                         0.9968      5057
+   macro avg     0.9968    0.9968    0.9968      5057
+weighted avg     0.9968    0.9968    0.9968      5057
+
+############################
