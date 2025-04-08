@@ -49,10 +49,13 @@ pd.set_option('display.float_format', lambda x: '%.3f' % x) # Show all the decim
 pd.set_option('display.width', get_terminal_size()[0]) # Get bigger terminal display width
 
 # Load the dataset
-df = pd.read_csv('dataset/combined.csv')
+# df = pd.read_csv('dataset/aggregated_train.csv')
+df = pd.read_csv('dataset/aggregated_test.csv')
 
 # Capitalize the column names
 df.columns = df.columns.str.upper()
+
+df = df.drop("EXP_NO", axis=1) # Drop EXP_NO column
 
 # Notes Implementation
 
@@ -526,8 +529,6 @@ print(df.head())
 scaler = MinMaxScaler()
 df[num_cols] = scaler.fit_transform(df[num_cols])
 
-df = df.drop("EXP_NO", axis=1)
-
 print('#'*50)
 
 print(df.head())
@@ -535,4 +536,5 @@ print(df.shape)
 print(cat_cols)
 
 # 6. Save the Dataset
-df.to_csv('dataset/combined_cleaned_without_droplist.csv', index=False)
+# df.to_csv('dataset/aggragated_train_cleaned.csv', index=False)
+df.to_csv('dataset/aggragated_test_cleaned.csv', index=False)
